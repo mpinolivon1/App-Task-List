@@ -10,28 +10,48 @@ const uncheck = 'fa-circle';
 const lineThrough = 'line-through';
 
 
-let LIST
-let id // para que inicie en 0 cada tarea tendra un id diferente
+
+let id = 0;// para que inicie en 0 cada tarea tendra un id diferente
 
 
 
 // funcion de agregar tarea
 function agregarTarea(tarea,id,realizado,eliminado) { // Le paso 4 parámetros debido a cuando creo una tarea, se le va a enviar el nombre de la tarea, su id, el estado de si está realizado o terminado
+
+  if(eliminado) {return} // si eliminado es true, nada de las líneas inferiores de la función se ejecutará
+
+  const REALIZADO = realizado ? check : uncheck; // si realizado es verdadero check si no está realizado, marca el uncheck
+
+  const LINE = realizado ? lineThrough : ''; // si realizado es verdadero activa el lineThrough y si es falso, activa
+
   const elemento = `
                       <li id="elemento">
-                      <i class="far fa-circle co" data="realizado" id="0"></i>
-                      <p class="text">${tarea}</p>
-                      <i class="fas fa-trash de" data="eliminado" id="0"></i>
+                      <i class="far ${REALIZADO}" data="realizado" id="${id}"></i>
+                      <p class="text ${LINE}">${tarea}</p>
+                      <i class="fas fa-trash de" data="eliminado" id="${id}"></i>
                       </li>
-                  `
+                    `
   lista.insertAdjacentHTML("beforeend",elemento) // El "insertAdjacentHTML" hará que al agregar un elemento a la lista, se pueda ir añadiendo gracias al DOM
 
 }
 
 
+// 3. funcion de Tarea Realizada
+function tareaRealizada(element) {
+  element.classList.toggle(check);     // Si detecta que el estado está en check, lo cambia a uncheck
+  element.classList.toggle(uncheck);   // Si detecta que el estado está en check, lo cambia a uncheck
+  element.parentNode.querySelector('.text').classList.toggle(lineThrough);  // Esto agregará la línea al momento de hacer clic
+}
 
 
-// Crear un evento para habilitar el boton y escuchar el enter
+//4. Creación de función de Tarea Eliminada
+function tareaEliminada(element){
+   element.parentNode.parentNode.removeChild(element.parentNode); // Para remover todo el hijo, se coloca 2 parentNode debido a que del li pasará al ul
+}
+
+
+
+//1. Crear un evento para habilitar el boton y escuchar el enter
 botonEnter.addEventListener('click', ()=> { // Agregar un evento de clic al botón "+"
   const tarea = input.value // con el .value, sabré que es lo que contiene y se lo estaré pasando a la constante "tarea"
   if(tarea){ // Si es que existe la tarea, se agrega el "agregar tarea (función)"
@@ -52,4 +72,24 @@ document.addEventListener('keyup', function (event) { // Agregar un evento al mo
       id++; // El id inicializará en 0 y esta línea hará que vaya aumentando el número de id
       }
   }
+})
+
+
+
+//2. Se creará los eventos de los botones, es decir que van a hacer cuando se haga clic en los iconos
+/* En resumen, este código está escuchando clics en un elemento HTML, obtiene el valor del atributo data del elemento clicado
+y luego realiza acciones específicas dependiendo de ese valor. Es común utilizar este patrón para manejar eventos de clic en elementos
+HTML y realizar acciones específicas en función de qué elemento ha sido clicado. */
+
+lista.addEventListener('click',function(event){
+  const element = event.target;
+  const elementData = element.attributes.data.value;
+  console.log(elementData)
+
+  if(elementData == 'realizado') {
+      tareaRealizada(element) // Se envía el parámetro element
+   }
+  else if(elementData == 'eliminado') {
+      tareaEliminada(element) // Se envía el parámetro element
+  };
 })
