@@ -10,10 +10,10 @@ const uncheck = 'fa-circle';
 const lineThrough = 'line-through';
 
 
-
 let id = 0;// para que inicie en 0 cada tarea tendra un id diferente
 
 
+let LIST;
 
 // funcion de agregar tarea
 function agregarTarea(tarea,id,realizado,eliminado) { // Le paso 4 parámetros debido a cuando creo una tarea, se le va a enviar el nombre de la tarea, su id, el estado de si está realizado o terminado
@@ -36,17 +36,25 @@ function agregarTarea(tarea,id,realizado,eliminado) { // Le paso 4 parámetros d
 }
 
 
+//5. creacion de fecha actualizada
+
+const FECHA = new Date ()
+fecha.innerHTML = FECHA.toLocaleDateString('es-PE',{weekday: 'long', month: 'long', day:'numeric'})
+
 // 3. funcion de Tarea Realizada
 function tareaRealizada(element) {
   element.classList.toggle(check);     // Si detecta que el estado está en check, lo cambia a uncheck
   element.classList.toggle(uncheck);   // Si detecta que el estado está en check, lo cambia a uncheck
   element.parentNode.querySelector('.text').classList.toggle(lineThrough);  // Esto agregará la línea al momento de hacer clic
+  LIST[element.id].realizado = LIST[element.id].realizado ?false :true;
 }
 
 
 //4. Creación de función de Tarea Eliminada
 function tareaEliminada(element){
    element.parentNode.parentNode.removeChild(element.parentNode); // Para remover todo el hijo, se coloca 2 parentNode debido a que del li pasará al ul
+   LIST[element.id].eliminado = true
+   console.log(LIST);
 }
 
 
@@ -56,6 +64,13 @@ botonEnter.addEventListener('click', ()=> { // Agregar un evento de clic al bot�
   const tarea = input.value // con el .value, sabré que es lo que contiene y se lo estaré pasando a la constante "tarea"
   if(tarea){ // Si es que existe la tarea, se agrega el "agregar tarea (función)"
       agregarTarea(tarea,id,false,false) // Al momento de crear una tarea se le enviarán 4 parámetros (nombre de la tarea, id, y los dos estados iniciales (false & false))
+      LIST.push({
+        nombre : tarea,
+        id : id,
+        realizado : false,
+        eliminado : false
+    })
+      localStorage.setItem('TODO',JSON.stringify(LIST)); // Se agrega esta función nativa de JS la cual nos permitirá almacenar la información creada del array LIST
       input.value = ''; // Al colocar '', la propiedad value hará que una vez ingresado el texto, este se limpie automáticamente
       id++; // El id inicializará en 0 y esta línea hará que vaya aumentando el número de id
   }
@@ -68,6 +83,13 @@ document.addEventListener('keyup', function (event) { // Agregar un evento al mo
       const tarea = input.value
       if(tarea) {
           agregarTarea(tarea); // Si es que existe la tarea, se agrega el "agregar tarea (función)"
+          LIST.push({
+            nombre : tarea,
+            id : id,
+            realizado : false,
+            eliminado : false
+        })
+      localStorage.setItem('TODO',JSON.stringify(LIST)); // Se agrega esta función nativa de JS la cual nos permitirá almacenar la información creada del array LIST
       input.value = ''; // Al colocar ' ', la propiedad value hará que una vez ingresado el texto, este se limpie automáticamente
       id++; // El id inicializará en 0 y esta línea hará que vaya aumentando el número de id
       }
@@ -92,4 +114,25 @@ lista.addEventListener('click',function(event){
   else if(elementData == 'eliminado') {
       tareaEliminada(element) // Se envía el parámetro element
   };
+  localStorage.setItem('TODO',JSON.stringify(LIST)) // Se agrega esta función nativa de JS la cual nos permitirá almacenar la información en el lugar donde se actualiza ello como realizado o eliminado
 })
+
+
+//Local storage
+let data = localStorage.getItem('TODO')
+if(data){
+    LIST = JSON.parse(data)
+    console.log(LIST)
+    id = LIST.length
+    cargarLista(LIST)
+}else {
+    LIST = []
+    id = 0
+}
+
+
+function cargarLista(array) {
+    array.forEach(function(item){
+        agregarTarea(item.nombre,item.id,item.realizado,item.eliminado)
+    })
+}
