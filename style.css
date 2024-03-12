@@ -7,7 +7,7 @@
 
 :root {
    --white: #fafafb;
-   --purple:#9a67ea;
+   --blue:#001f36;
    --blue-light:#04d4c3;
    --blue-dark:#2a73c2;
    --green: #2c7b90;
@@ -15,18 +15,31 @@
 }
 
 body {
-    background: linear-gradient(to bottom,var(--purple),var(--blue-light)); /*Para hacer el estilo gradiente, el purple es el color superior */
+    background: linear-gradient(to bottom,var(--blue),var(--blue-light)); /*Para hacer el estilo gradiente, el purple es el color superior */
     height: 100vh;   /* se coloca vh para ocupar todo el porcentaje de la pantalla y esto también ayuda al gradiente*/
     font-family: 'Prompt', sans-serif; /*Se coloca por si acaso el sans serif en caso que no cargue la primera fuente*/
+    overflow: hidden;
 }
 
 /* Contenedor principal */
+
+.main-container {
+  float: right;
+  margin-left: 10px;
+  width: 100vh;
+  height: 60vh;
+  
+}
+
+
 .container {
-    max-width: 80%;
+    float: left;
+    margin-left: 30vh;
     width: 400px;
     height: 600px;
-    margin: 0 auto;
+    overflow: hidden;
 }
+
 
 /*PERFIL*/
 
@@ -77,7 +90,7 @@ body {
 
 .agregar-tarea i{
   font-size: 50px; /*cada vez que usamos iconos, se debe usar la propiedad font size*/
-  color: var(--purple);
+  color: var(--blue);
 
 }
 
